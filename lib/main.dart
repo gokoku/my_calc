@@ -13,11 +13,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My Calc',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text("My CaCalc"),
+          title: Text("My Calculator"),
         ),
         body: Column(
           children: [
@@ -38,7 +38,7 @@ class TextField extends StatefulWidget {
 class _TextFieldState extends State<TextField> {
   static final controller = StreamController<String>.broadcast();
   String _expression = '0';
-  String _regist = '0';
+  String _regist = '';
   String _operation = '';
 
   void initState() {
@@ -78,7 +78,7 @@ class _TextFieldState extends State<TextField> {
               Text(
                 _regist,
                 style: TextStyle(
-                  color: Colors.lightGreen,
+                  color: Colors.blueGrey,
                   fontSize: 30.0,
                 ),
               )
@@ -102,6 +102,7 @@ class Keyboard extends StatelessWidget {
       flex: 2,
       child: Center(
         child: Container(
+          padding: EdgeInsets.all(10.0),
           //color: const Color(0xff87fefa),
           child: GridView.count(
             crossAxisCount: 4,
@@ -143,7 +144,14 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: TextButton(
+      padding: EdgeInsets.all(5.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: const Color(0xffeee0b0),
+          onPrimary: Colors.black54,
+          shape: const StadiumBorder(),
+          elevation: 8,
+        ),
         onPressed: () {
           _TextFieldState.controller.sink.add(_key);
         },

@@ -5,7 +5,7 @@ class Calculator {
   static List<double> _acc = [null, null]; // null: 不確定
   static int _acc_num = 0;
   static String _op = '';
-  static double _ans = null;
+  static bool _enter = false;
 
   static List receive(String str) {
     if (c_op.contains(str)) {
@@ -18,6 +18,7 @@ class Calculator {
           _acc_num = 0;
         }
         _disp[1] = '';
+        _enter = true;
       } else {
         if (_acc[0] == null) {
           _acc_num = 0;
@@ -29,11 +30,12 @@ class Calculator {
         _op = str;
       }
     } else {
-      if (_acc[0] == null || _acc[1] == null) {
+      if (_acc[_acc_num] == null || _enter) {
         _disp[0] = '';
       }
       _disp[0] += str;
       _acc[_acc_num] = double.parse(_disp[0]);
+      _enter = false;
     }
 
     print("_acc: ${_acc}   _op: ${_op}");
@@ -65,5 +67,6 @@ class Calculator {
     _acc = [null, null];
     _acc_num = 0;
     _op = '';
+    _enter = false;
   }
 }
