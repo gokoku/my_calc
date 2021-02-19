@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'calculation.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,86 +11,149 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'My Calc',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyCalc(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("My CaCalc"),
+        ),
+        body: Column(
+          children: [
+            TextField(),
+            Keyboard(),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class MyCalc extends StatelessWidget {
+class TextField extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text('MyCalc')),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text("a"),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    myPanel("7"),
-                    myPanel("4"),
-                    myPanel("1"),
-                    myPanel("0")
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    myPanel("8"),
-                    myPanel("5"),
-                    myPanel("2"),
-                    myPanel("00")
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    myPanel("9"),
-                    myPanel("6"),
-                    myPanel("3"),
-                    myPanel("=")
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    myPanel("-"),
-                    myPanel("+"),
-                    myPanel("*"),
-                    myPanel("/")
-                  ],
-                ),
-              ],
-            )
-          ],
-        ));
+  _TextFieldState createState() => _TextFieldState();
+}
+
+class _TextFieldState extends State<TextField> {
+  static final controller = StreamController<String>.broadcast();
+  String _expression = '0';
+  String _regist = '0';
+  String _operation = '';
+
+  void initState() {
+    controller.stream.listen((event) => _UpdateText(event));
   }
 
-  Container myPanel(String n) {
+  void _UpdateText(String letter) {
+    List res = Calculator.receive(letter);
+    setState(() {
+      _expression = res[0];
+      _regist = res[1];
+      _operation = res[2];
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(1),
-      width: 70,
-      height: 70,
-      color: Colors.black26,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              n,
-              style: TextStyle(
-                fontSize: 30,
-                color: Colors.white,
+      padding: EdgeInsets.all(30.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            children: [
+              Text(
+                _operation,
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 30.0,
+                ),
               ),
-            ),
-          ]),
+              Text(
+                _regist,
+                style: TextStyle(
+                  color: Colors.lightGreen,
+                  fontSize: 30.0,
+                ),
+              )
+            ],
+          ),
+          Spacer(),
+          Text(
+            _expression,
+            style: TextStyle(fontSize: 64.0),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Keyboard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 2,
+      child: Center(
+        child: Container(
+          //color: const Color(0xff87fefa),
+          child: GridView.count(
+            crossAxisCount: 4,
+            mainAxisSpacing: 3.0,
+            crossAxisSpacing: 3.0,
+            children: [
+              '7',
+              '8',
+              '9',
+              '/',
+              '4',
+              '5',
+              '6',
+              '*',
+              '1',
+              '2',
+              '3',
+              '-',
+              'C',
+              '0',
+              '=',
+              '+',
+            ].map((key) {
+              return GridTile(
+                child: Button(key),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Button extends StatelessWidget {
+  final _key;
+  Button(this._key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: TextButton(
+        onPressed: () {
+          _TextFieldState.controller.sink.add(_key);
+        },
+        child: Center(
+          child: Text(
+            _key,
+            style: TextStyle(fontSize: 32.0),
+          ),
+        ),
+      ),
     );
   }
 }
