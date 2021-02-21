@@ -87,6 +87,7 @@ class _TextFieldState extends State<TextField> {
           Spacer(),
           Text(
             _expression,
+            key: Key('result'),
             style: TextStyle(fontSize: 64.0),
           ),
         ],
@@ -155,6 +156,7 @@ class Button extends StatelessWidget {
         child: Center(
           child: Text(
             _key,
+            key: Key(_key),
             style: TextStyle(fontSize: 32.0),
           ),
         ),
